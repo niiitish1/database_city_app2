@@ -1,4 +1,6 @@
+import 'dart:collection';
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:database_state_city/city_name.dart';
 import 'package:database_state_city/common.dart';
@@ -18,10 +20,10 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   var stateArr = [];
-  var itemClicked = -1;
   var cityArr = [];
-  var isOpen = true;
+  var isOpen = false;
   Map<String, dynamic> cityDict = Map();
+  Map<int, bool> checkOpenClose = HashMap();
   @override
   void initState() {
     super.initState();
@@ -30,81 +32,82 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // isOpen ? isOpen = false : isOpen = true;
-
+    // isOpen = false;
     return Scaffold(
       appBar: AppBar(
         title: Text("State Name"),
       ),
       body: SafeArea(
-        child: ListView.separated(
-          separatorBuilder: (context, index) {
-            return Divider();
-          },
-          itemCount: stateArr.length,
-          itemBuilder: (context, stateIndex) {
-            return GestureDetector(
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(stateArr[stateIndex]),
-                      itemClicked == stateIndex && isOpen
-                          ? const Icon(
-                              Icons.arrow_upward,
-                              color: Colors.black,
-                            )
-                          : const Icon(
-                              Icons.arrow_downward,
-                              color: Colors.black,
-                            )
-                    ],
-                  ),
-                  itemClicked == stateIndex && isOpen
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            for (var item in cityArr) ...{Text(item)},
-                          ],
-                        )
-                      : SizedBox()
-                ],
-              ),
-              onTap: () {
-                setState(() {
-                  itemClicked = stateIndex;
-                  cityArr = cityDict[stateArr[stateIndex]];
-                  isOpen ? isOpen = false : isOpen = true;
-                  print("$stateIndex is clicked..................");
-                  // for (var item in cityArr) {
-                  //   print(item);
-                  // }
-                });
-              },
-            );
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: ListView.separated(
+            separatorBuilder: (context, index) {
+              return Divider();
+            },
+            itemCount: stateArr.length,
+            itemBuilder: (context, stateIndex) {
+              return GestureDetector(
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(stateArr[stateIndex]),
+                        checkOpenClose[stateIndex] == true
+                            ? const Icon(
+                                Icons.arrow_upward,
+                                color: Colors.black,
+                              )
+                            : const Icon(
+                                Icons.arrow_downward,
+                                color: Colors.black,
+                              )
+                      ],
+                    ),
+                    checkOpenClose[stateIndex] == true
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              for (var item in cityArr) ...{Text(item)},
+                            ],
+                          )
+                        : const SizedBox()
+                  ],
+                ),
+                onTap: () {
+                  setState(() {
+                    cityArr = cityDict[stateArr[stateIndex]];
+                    checkOpenClose.containsKey(stateIndex)
+                        ? checkOpenClose[stateIndex] == true
+                            ? checkOpenClose[stateIndex] = false
+                            : checkOpenClose[stateIndex] = true
+                        : checkOpenClose[stateIndex] = true;
+                  });
+                },
+              );
 
-            // return GestureDetector(
-            //   onTap: () {
-            //     Common.index = index;
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //         builder: (context) => MyCity(arr, cityDict),
-            //       ),
-            //     );
-            //   },
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(12.0),
-            //     child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.start,
-            //       children: [
-            //         Text(arr[index]),
-            //       ],
-            //     ),
-            //   ),
-            // );
-          },
+              // return GestureDetector(
+              //   onTap: () {
+              //     Common.index = index;
+              //     Navigator.push(
+              //       context,
+              //       MaterialPageRoute(
+              //         builder: (context) => MyCity(arr, cityDict),
+              //       ),
+              //     );
+              //   },
+              //   child: Padding(
+              //     padding: const EdgeInsets.all(12.0),
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.start,
+              //       children: [
+              //         Text(arr[index]),
+              //       ],
+              //     ),
+              //   ),
+              // );
+            },
+          ),
         ),
       ),
     );
