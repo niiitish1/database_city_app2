@@ -21,6 +21,8 @@ class _MyCityState extends State<MyCity> {
   @override
   void initState() {
     super.initState();
+    // HomePage homePage = HomePage();
+
     newArr = cityData[arr[Common.index]];
   }
 
