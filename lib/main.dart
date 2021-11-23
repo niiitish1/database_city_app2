@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   var stateArr = [];
   var cityArr = [];
   var isOpen = false;
-  Map<String, dynamic> cityDict = Map();
+  Map<String, dynamic> cityDict = HashMap();
   Map<int, bool> checkOpenClose = HashMap();
   @override
   void initState() {
@@ -38,15 +38,17 @@ class _HomePageState extends State<HomePage> {
         title: Text("State Name"),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: ListView.separated(
-            separatorBuilder: (context, index) {
-              return Divider();
-            },
-            itemCount: stateArr.length,
-            itemBuilder: (context, stateIndex) {
-              return GestureDetector(
+        child: ListView.separated(
+          separatorBuilder: (context, index) {
+            return const Divider(
+              color: Colors.green,
+            );
+          },
+          itemCount: stateArr.length,
+          itemBuilder: (context, stateIndex) {
+            return GestureDetector(
+              child: Container(
+                padding: const EdgeInsets.all(15.0),
                 child: Column(
                   children: [
                     Row(
@@ -74,40 +76,41 @@ class _HomePageState extends State<HomePage> {
                         : const SizedBox()
                   ],
                 ),
-                onTap: () {
-                  setState(() {
-                    cityArr = cityDict[stateArr[stateIndex]];
-                    checkOpenClose.containsKey(stateIndex)
-                        ? checkOpenClose[stateIndex] == true
-                            ? checkOpenClose[stateIndex] = false
-                            : checkOpenClose[stateIndex] = true
-                        : checkOpenClose[stateIndex] = true;
-                  });
-                },
-              );
+              ),
+              onTap: () {
+                setState(() {
+                  cityArr = cityDict[stateArr[stateIndex]];
+                  checkOpenClose.containsKey(stateIndex)
+                      ? checkOpenClose[stateIndex] == true
+                          ? checkOpenClose[stateIndex] = false
+                          : checkOpenClose[stateIndex] = true
+                      : checkOpenClose[stateIndex] = true;
+                  print("done");
+                });
+              },
+            );
 
-              // return GestureDetector(
-              //   onTap: () {
-              //     Common.index = index;
-              //     Navigator.push(
-              //       context,
-              //       MaterialPageRoute(
-              //         builder: (context) => MyCity(arr, cityDict),
-              //       ),
-              //     );
-              //   },
-              //   child: Padding(
-              //     padding: const EdgeInsets.all(12.0),
-              //     child: Column(
-              //       crossAxisAlignment: CrossAxisAlignment.start,
-              //       children: [
-              //         Text(arr[index]),
-              //       ],
-              //     ),
-              //   ),
-              // );
-            },
-          ),
+            // return GestureDetector(
+            //   onTap: () {
+            //     Common.index = index;
+            //     Navigator.push(
+            //       context,
+            //       MaterialPageRoute(
+            //         builder: (context) => MyCity(arr, cityDict),
+            //       ),
+            //     );
+            //   },
+            //   child: Padding(
+            //     padding: const EdgeInsets.all(12.0),
+            //     child: Column(
+            //       crossAxisAlignment: CrossAxisAlignment.start,
+            //       children: [
+            //         Text(arr[index]),
+            //       ],
+            //     ),
+            //   ),
+            // );
+          },
         ),
       ),
     );
@@ -125,12 +128,8 @@ class _HomePageState extends State<HomePage> {
     var jsonResp = jsonDecode(resp.body);
 
     cityDict = jsonResp["city_array"];
-    stateArr = cityDict.keys.toList();
-    setState(() {});
-
-    // for (var item in stateArr) {
-    //   print("Item is --> $item");
-    //   print("$item Cities --->${cityDict[item]}");
-    // }
+    setState(() {
+      stateArr = cityDict.keys.toList();
+    });
   }
 }
